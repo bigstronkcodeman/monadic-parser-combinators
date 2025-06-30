@@ -11,8 +11,8 @@ This parser handles the full JSON specification, including proper Unicode suppor
 GHC 9.4.8+ and Cabal 3.0+ required.
 
 ```bash
-git clone <this-repo>
-cd haskell-json-parser
+git clone https://github.com/bigstronkcodeman/monadic-parser-combinators.git
+cd monadic-parser-combinators
 cabal build
 cabal run parsing
 ```
@@ -27,8 +27,8 @@ The main streaming parser can handle JSON data that's split at completely arbitr
 
 ```haskell
 -- These chunks arrive separately:
--- Chunk 1: {"name": "Ali        -- incomplete string
--- Chunk 2: ce", "age": 28}      -- completes the JSON
+-- Chunk 1: {"name": "Ali   -- incomplete string
+-- Chunk 2: ce", "age": 28} -- completes the JSON
 
 processStream processor [chunk1, chunk2]
 ```
@@ -46,7 +46,7 @@ processJsonArrayFile handle $ \element -> do
   return True  -- or False to stop early
 ```
 
-This lets you handle arrays with millions of elements while using constant memory.
+This lets you handle JSON arrays (think JSONL) with many elements while using constant memory.
 
 ## Implementation
 
