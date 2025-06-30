@@ -1,0 +1,8 @@
+[ 
+  {
+    "test" : {
+      "a key": [1.0, 2.0],
+      "some bool": true
+    }
+  } 
+]

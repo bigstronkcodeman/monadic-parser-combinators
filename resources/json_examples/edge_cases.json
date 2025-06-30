@@ -1,0 +1,52 @@
+{
+  "empty_object": {},
+  "empty_array": [],
+  "null_value": null,
+  "empty_string": "",
+  "whitespace_string": "   ",
+  "zero_number": 0,
+  "negative_number": -42,
+  "floating_point": 0.000001,
+  "large_number": 1234567890123456789,
+  "scientific_notation": 1.23e10,
+  "negative_scientific": -4.56e-7,
+  "boolean_true": true,
+  "boolean_false": false,
+  "nested_empties": {
+    "empty_nested": {},
+    "array_of_empties": [{}, {}, {}],
+    "object_with_nulls": {
+      "a": null,
+      "b": null,
+      "c": null
+    }
+  },
+  "complex_nesting": {
+    "level1": {
+      "level2": {
+        "level3": {
+          "level4": {
+            "deep_value": "found me!"
+          }
+        }
+      }
+    }
+  },
+  "array_edge_cases": [
+    [],
+    [null],
+    [{}],
+    [{"empty": {}}],
+    [1, 2, 3, [], {}, null, true, false]
+  ],
+  "special_keys": {
+    "": "empty key",
+    " ": "space key",
+    "123": "numeric key",
+    "key with spaces": "value",
+    "key-with-dashes": "value", 
+    "key_with_underscores": "value",
+    "UPPERCASE": "value",
+    "mixedCase": "value"
+  }
+}

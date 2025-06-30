@@ -1,0 +1,47 @@
+{
+  "unicode_text": {
+    "english": "Hello World",
+    "chinese": "你好世界",
+    "japanese": "こんにちは世界",
+    "arabic": "مرحبا بالعالم",
+    "russian": "Привет мир",
+    "emoji": "🌍🚀⭐🎉💻",
+    "mathematical": "∑∏∫∆√π∞",
+    "symbols": "©®™€£¥§¶†‡•…‰‹›",
+    "accented": "Café naïve résumé piñata"
+  },
+  "escape_sequences": {
+    "quote": "She said \"Hello!\"",
+    "backslash": "Path: C:\\Users\\name",
+    "newline": "Line 1\nLine 2",
+    "tab": "Column1\tColumn2",
+    "carriage_return": "Old Mac\rReturn",
+    "backspace": "Error\b\b\b\bFixed",
+    "form_feed": "Page 1\fPage 2",
+    "unicode_escape": "Unicode: \\u0048\\u0065\\u006C\\u006C\\u006F"
+  },
+  "special_numbers": {
+    "hex_looking": "0xFF",
+    "binary_looking": "0b1010", 
+    "octal_looking": "0o777",
+    "exponential_string": "1.23e45",
+    "infinity_string": "Infinity",
+    "nan_string": "NaN"
+  },
+  "edge_case_strings": {
+    "json_like": "{\"fake\": \"json\"}",
+    "array_like": "[1, 2, 3]",
+    "boolean_like": "true",
+    "null_like": "null",
+    "number_like": "123.45",
+    "whitespace_heavy": "  \t\n  spaced  \t\n  ",
+    "control_chars": "Start\u0001\u0002\u0003End",
+    "high_unicode": "𝕳𝖊𝖑𝖑𝖔 𝖂𝖔𝖗𝖑𝖉",
+    "rtl_text": "שלום עולם"
+  },
+  "stress_test": {
+    "long_string": "This is a very long string that tests how well the parser handles extended text content with many words and characters that might stress test the parsing logic and memory allocation patterns in the parser implementation.",
+    "repeated_pattern": "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz",
+    "mixed_content": "Text with 🌟 emoji and \\u0041\\u0042\\u0043 unicode escapes and \"quotes\" and numbers 123.45 and symbols @#$%^&*()!"
+  }
+}

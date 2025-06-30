@@ -1,0 +1,5 @@
+{
+  "basic": "Hello World",
+  "escaped_quote": "She said \"Hello!\"",
+  "simple_escape": "Line 1\nLine 2"
+}

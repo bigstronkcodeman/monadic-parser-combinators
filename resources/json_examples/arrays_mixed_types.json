@@ -1,0 +1,59 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "name": "Laptop",
+      "price": 999.99,
+      "in_stock": true,
+      "tags": ["electronics", "computers", "portable"],
+      "specifications": {
+        "cpu": "Intel i7",
+        "ram": "16GB",
+        "storage": "512GB SSD"
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "comment": "Excellent performance!",
+          "verified": true,
+          "date": "2024-06-15"
+        },
+        {
+          "rating": 4,
+          "comment": "Good value for money",
+          "verified": false,
+          "date": "2024-06-20"
+        }
+      ]
+    },
+    {
+      "id": 2,  
+      "name": "Coffee Mug",
+      "price": 12.50,
+      "in_stock": false,
+      "tags": ["kitchen", "ceramic"],
+      "specifications": null,
+      "reviews": []
+    }
+  ],
+  "categories": ["electronics", "kitchen", "books", "clothing"],
+  "store_info": {
+    "name": "TechMart",
+    "locations": [
+      {"city": "New York", "employees": 45},
+      {"city": "Los Angeles", "employees": 32},
+      {"city": "Chicago", "employees": 28}
+    ],
+    "revenue_by_quarter": [1200000, 1350000, 1180000, 1420000],
+    "active": true
+  },
+  "mixed_array": [
+    42,
+    "hello world",
+    true,
+    null,
+    {"nested": "object"},
+    [1, 2, 3],
+    3.14159
+  ]
+}

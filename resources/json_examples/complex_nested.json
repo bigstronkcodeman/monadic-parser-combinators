@@ -1,0 +1,45 @@
+{
+  "user": {
+    "id": 12345,
+    "profile": {
+      "name": "Alice Johnson",
+      "email": "alice.johnson@example.com",
+      "preferences": {
+        "theme": "dark",
+        "notifications": {
+          "email": true,
+          "push": false,
+          "sms": true
+        }
+      },
+      "address": {
+        "street": "123 Main St",
+        "city": "Springfield",
+        "state": "IL",
+        "zipcode": "62701",
+        "coordinates": {
+          "latitude": 39.7817,
+          "longitude": -89.6501
+        }
+      }
+    },
+    "account": {
+      "created": "2023-01-15T10:30:00Z",
+      "last_login": "2024-06-29T14:22:33Z",
+      "subscription": {
+        "tier": "premium",
+        "expires": "2024-12-31T23:59:59Z",
+        "features": {
+          "unlimited_storage": true,
+          "priority_support": true,
+          "advanced_analytics": true
+        }
+      }
+    }
+  },
+  "metadata": {
+    "version": "1.2.3",
+    "generated_at": "2024-06-30T00:00:00Z",
+    "request_id": "req_abc123def456"
+  }
+}
