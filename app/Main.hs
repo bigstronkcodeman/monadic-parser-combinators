@@ -13,7 +13,7 @@ import Text.Printf (printf)
 import qualified Data.HashMap.Lazy
 import Parsing.JSONParser (JsonValue(..), jsonValue, prettyPrintJson)
 import Parsing.StreamingArrayParser (processJsonArrayFile)
-import Parsing.ArbitraryStreaming (processStream, initState, feedChunk)
+import Parsing.ArbitraryStreaming (processStream)
 import Parsing.Primitives (parse)
 import Parsing.ParserTypes (Result(..))
 
