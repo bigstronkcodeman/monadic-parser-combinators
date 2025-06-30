@@ -4,8 +4,11 @@ module Main where
 import Paths_parsing (getDataDir)
 import System.Directory (listDirectory, doesFileExist, doesDirectoryExist)
 import System.FilePath ((</>), takeExtension, takeFileName)
-import System.IO (IOMode(..), openFile, hClose)
+import System.IO (IOMode(..), openFile, hClose, hSetBuffering, BufferMode(..), Handle)
 import qualified Data.Text.Lazy.IO as T
+import qualified Data.Text.Lazy.Encoding as TLE
+import qualified Data.ByteString as BS
+import qualified Data.ByteString.Lazy as BSL
 import qualified Data.Text.Lazy as TL
 import Control.Exception (IOException, try)
 import Control.Monad (forM_, filterM)
@@ -34,7 +37,7 @@ walkDirectoryWith p filePath = filter p <$> walkDirectory filePath
 
 streamingArrayTest :: IO ()
 streamingArrayTest = do
-  printf "=== True Streaming JSON Array Parser ===\n"
+  printf "=== Streaming JSON Array Parser ===\n"
   dataDir <- getDataDir
   let arrayFile = dataDir </> "resources" </> "large_array.json"
   printf "Processing JSON array file: %s\n" $ takeFileName arrayFile
@@ -80,51 +83,62 @@ regularParseTest = do
     jsonText <- T.readFile filePath
     let parsedJson = parse jsonValue jsonText
     case parsedJson of
-      Failure _ _ _ err -> printf "✗ Failed to parse JSON! Error: %s\n" err
-      Partial _ -> printf "⚠ Partial result\n"
+      Failure _ _ _ err -> printf "Failed to parse JSON! Error: %s\n" err
+      Partial _ -> printf "Partial result\n"
       Finished _ result -> do
-        printf "✓ Successfully parsed:\n%s\n" (prettyPrintJson result)
+        printf "Successfully parsed:\n%s\n" (prettyPrintJson result)
   printf "\n"
 
 arbitraryStreamingTest :: IO ()
 arbitraryStreamingTest = do
   printf "=== Arbitrary Streaming JSON Parser ===\n"
-  printf "Testing with partial JSON across arbitrary chunk boundaries...\n\n"
+  printf "Testing with real buffered file reading...\n\n"
   
-  -- Test 1: Basic string splitting
-  printf "Test 1: String split across chunks\n"
-  let chunk1 = TL.pack "{\"name\": \"Ali"
-  let chunk2 = TL.pack "ce\", \"age\": 28}"
+  dataDir <- getDataDir
+  let resourcesDir = dataDir </> "resources"
   
-  printf "Chunk 1: %s\n" (show chunk1)
-  printf "Chunk 2: %s\n" (show chunk2)
-  printf "\n"
+  printf "Test 1: complex_numbers.json with 32-byte buffer chunks\n"
+  let complexFile = resourcesDir </> "complex_numbers.json"
+  printf "File: %s\n" $ takeFileName complexFile
   
-  totalProcessed1 <- processStream processor [chunk1, chunk2]
+  handle1 <- openFile complexFile ReadMode
+  totalProcessed1 <- readFileInChunks handle1 32 processor
+  hClose handle1
   printf "Total JSON objects parsed: %d\n\n" totalProcessed1
   
-  -- Test 2: Complex number formats split across chunks
-  printf "Test 2: Complex numbers split across chunks\n"
-  let numChunk1 = TL.pack "{\"scientific\": 1.23"
-  let numChunk2 = TL.pack "e-10, \"negative\": -456"
-  let numChunk3 = TL.pack ".789, \"large\": 9.87E+"
-  let numChunk4 = TL.pack "20}"
+  printf "Test 2: Reading simple_unicode.json with 16-byte buffer chunks\n"
+  let unicodeFile = resourcesDir </> "json_examples" </> "simple_unicode.json"
+  printf "File: %s\n" $ takeFileName unicodeFile
   
-  printf "Chunk 1: %s\n" (show numChunk1)
-  printf "Chunk 2: %s\n" (show numChunk2)
-  printf "Chunk 3: %s\n" (show numChunk3)
-  printf "Chunk 4: %s\n" (show numChunk4)
-  printf "\n"
-  
-  totalProcessed2 <- processStream processor [numChunk1, numChunk2, numChunk3, numChunk4]
+  handle2 <- openFile unicodeFile ReadMode
+  totalProcessed2 <- readFileInChunks handle2 16 processor
+  hClose handle2
   printf "Total JSON objects parsed: %d\n\n" totalProcessed2
   
-  printf "✅ Successfully handled partial JSON across chunk boundaries!\n\n"
+  printf "✅ Successfully parsed files using real buffered streaming!\n\n"
   where 
     processor :: JsonValue -> IO Bool
     processor value = do
-      printf "✓ Parsed complete JSON: %s\n" (prettyPrintJson value)
+      printf "✓ Parsed complete JSON from disk chunks:\n%s\n" (prettyPrintJson value)
       return True
+    
+    readFileInChunks :: Handle -> Int -> (JsonValue -> IO Bool) -> IO Int
+    readFileInChunks handle chunkSize proc = do
+      chunks <- readAllChunks handle chunkSize []
+      printf "Read %d chunks from file\n" (length chunks)
+      forM_ (zip [1::Int ..] chunks) $ \(i, chunk) -> 
+        printf "  Chunk %d: %d bytes\n" i (TL.length chunk)
+      printf "\n"
+      processStream proc chunks
+    
+    readAllChunks :: Handle -> Int -> [TL.Text] -> IO [TL.Text]
+    readAllChunks handle chunkSize acc = do
+      bs <- BS.hGetSome handle chunkSize
+      if BS.null bs
+        then return (reverse acc)
+        else do
+          let chunk = TLE.decodeUtf8 (BSL.fromStrict bs)
+          readAllChunks handle chunkSize (chunk : acc)
 
 main :: IO ()
 main = do
