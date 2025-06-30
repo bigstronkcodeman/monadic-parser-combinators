@@ -129,15 +129,83 @@ parseString input
       _ -> Nothing
 
 parseNumber :: TL.Text -> Maybe (JsonValue, TL.Text)
-parseNumber input = 
-  let (numberStr, remaining) = TL.span isNumberChar input
-  in if TL.null numberStr
-     then Nothing
-     else case reads (TL.unpack numberStr) of
-       [(n, "")] -> Just (JsonNumber n, remaining)
-       _ -> Nothing
+parseNumber input = parseFloatLike input
   where
-    isNumberChar c = isDigit c || c `elem` ("-+.eE" :: String)
+    parseFloatLike :: TL.Text -> Maybe (JsonValue, TL.Text)
+    parseFloatLike inp
+      | TL.null inp = Nothing
+      | otherwise = 
+          let (sign, afterSign) = parseSign inp
+              (wholePart, afterWhole) = parseDigits afterSign
+              (hasDot, fractionalPart, afterFrac) = parseFractional afterWhole
+              (hasExp, expValue, remaining) = parseExponent afterFrac
+              
+              wholeValue = maybe 0 id wholePart
+              fracValue = calculateFractional fractionalPart
+              baseValue = fromIntegral wholeValue + fracValue
+              finalValue = if hasExp 
+                          then baseValue * (10 ^^ expValue)
+                          else baseValue
+              result = sign * finalValue
+              
+          in if wholePart == Nothing && not hasDot
+             then Nothing  
+             else Just (JsonNumber result, remaining)
+    
+    parseSign :: TL.Text -> (Double, TL.Text)
+    parseSign inp
+      | TL.null inp = (1, inp)
+      | TL.head inp == '-' = (-1, TL.tail inp)
+      | TL.head inp == '+' = (1, TL.tail inp)  
+      | otherwise = (1, inp)
+    
+    parseDigits :: TL.Text -> (Maybe Int, TL.Text)
+    parseDigits inp =
+      let (digitStr, remaining) = TL.span isDigit inp
+      in if TL.null digitStr
+         then (Nothing, inp)
+         else case reads (TL.unpack digitStr) of
+                [(n, "")] -> (Just n, remaining)
+                _ -> (Nothing, inp)
+    
+    parseFractional :: TL.Text -> (Bool, TL.Text, TL.Text)
+    parseFractional inp
+      | TL.null inp || TL.head inp /= '.' = (False, TL.empty, inp)
+      | otherwise = 
+          let afterDot = TL.tail inp
+              (fracDigits, remaining) = TL.span isDigit afterDot
+          in (True, fracDigits, remaining)
+    
+    calculateFractional :: TL.Text -> Double
+    calculateFractional fracDigits
+      | TL.null fracDigits = 0
+      | otherwise = 
+          let digits = TL.unpack fracDigits
+              len = length digits
+          in case reads digits of
+               [(n, "")] -> fromIntegral n * (10 ^^ negate len)
+               _ -> 0
+    
+    parseExponent :: TL.Text -> (Bool, Int, TL.Text)
+    parseExponent inp
+      | TL.null inp = (False, 0, inp)
+      | TL.head inp `elem` ("eE" :: String) = 
+          let afterE = TL.tail inp
+              (expSign, afterExpSign) = parseExpSign afterE
+              (expDigits, remaining) = TL.span isDigit afterExpSign
+          in if TL.null expDigits
+             then (False, 0, inp)  
+             else case reads (TL.unpack expDigits) of
+                    [(n, "")] -> (True, expSign * n, remaining)
+                    _ -> (False, 0, inp)
+      | otherwise = (False, 0, inp)
+    
+    parseExpSign :: TL.Text -> (Int, TL.Text)
+    parseExpSign inp
+      | TL.null inp = (1, inp)
+      | TL.head inp == '-' = (-1, TL.tail inp)
+      | TL.head inp == '+' = (1, TL.tail inp)
+      | otherwise = (1, inp)
 
 parseObject :: TL.Text -> Maybe (JsonValue, TL.Text)
 parseObject input

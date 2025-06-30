@@ -1,0 +1,15 @@
+{
+  "integer": 42,
+  "negative": -123,
+  "decimal": 3.14159,
+  "negative_decimal": -2.71828,
+  "scientific_positive": 1.23e10,
+  "scientific_negative": -4.56e-7,
+  "scientific_uppercase": 7.89E+12,
+  "small_scientific": 1e-10,
+  "large_scientific": 9E20,
+  "zero": 0,
+  "negative_zero": -0,
+  "decimal_only": 0.5,
+  "leading_zero_decimal": 0.001
+}
