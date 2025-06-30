@@ -4,7 +4,7 @@ A JSON parser built from scratch in Haskell using parser combinators. Includes s
 
 ## What it does
 
-This parser handles the full JSON specification, including proper Unicode support and all the standard escape sequences. There is also a streaming implementation - it can parse JSON that comes in arbitrary chunks, like you'd get from a network connection or when reading a large file in pieces.
+This parser handles the full JSON specification, including proper Unicode support and all the standard escape sequences. There is also a streaming implementation - it can parse JSON that comes in arbitrary chunks, like you'd get from a network connection or when buffering a large file being read from disk.
 
 ## Building and running
 
