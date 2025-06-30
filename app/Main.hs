@@ -91,6 +91,8 @@ arbitraryStreamingTest = do
   printf "=== Arbitrary Streaming JSON Parser ===\n"
   printf "Testing with partial JSON across arbitrary chunk boundaries...\n\n"
   
+  -- Test 1: Basic string splitting
+  printf "Test 1: String split across chunks\n"
   let chunk1 = TL.pack "{\"name\": \"Ali"
   let chunk2 = TL.pack "ce\", \"age\": 28}"
   
@@ -98,8 +100,25 @@ arbitraryStreamingTest = do
   printf "Chunk 2: %s\n" (show chunk2)
   printf "\n"
   
-  totalProcessed <- processStream processor [chunk1, chunk2]
-  printf "\nTotal JSON objects parsed: %d\n" totalProcessed
+  totalProcessed1 <- processStream processor [chunk1, chunk2]
+  printf "Total JSON objects parsed: %d\n\n" totalProcessed1
+  
+  -- Test 2: Complex number formats split across chunks
+  printf "Test 2: Complex numbers split across chunks\n"
+  let numChunk1 = TL.pack "{\"scientific\": 1.23"
+  let numChunk2 = TL.pack "e-10, \"negative\": -456"
+  let numChunk3 = TL.pack ".789, \"large\": 9.87E+"
+  let numChunk4 = TL.pack "20}"
+  
+  printf "Chunk 1: %s\n" (show numChunk1)
+  printf "Chunk 2: %s\n" (show numChunk2)
+  printf "Chunk 3: %s\n" (show numChunk3)
+  printf "Chunk 4: %s\n" (show numChunk4)
+  printf "\n"
+  
+  totalProcessed2 <- processStream processor [numChunk1, numChunk2, numChunk3, numChunk4]
+  printf "Total JSON objects parsed: %d\n\n" totalProcessed2
+  
   printf "✅ Successfully handled partial JSON across chunk boundaries!\n\n"
   where 
     processor :: JsonValue -> IO Bool
