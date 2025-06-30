@@ -33,11 +33,11 @@ The main streaming parser can handle JSON data that's split at completely arbitr
 processStream processor [chunk1, chunk2]
 ```
 
-This is useful when you're reading from a network socket or processing a large file in small chunks. The parser maintains state between chunks and only emits complete JSON values.
+This is useful when you're reading from a network socket or processing a large file in small chunks. The parser buffers incomplete data until complete JSON values can be parsed.
 
 ### Array streaming
 
-The array streaming parser processes large JSON arrays without loading the entire thing into memory:
+The array streaming parser provides convenient element-by-element processing of JSON arrays:
 
 ```haskell
 processJsonArrayFile handle $ \element -> do
@@ -46,7 +46,7 @@ processJsonArrayFile handle $ \element -> do
   return True  -- or False to stop early
 ```
 
-This lets you handle JSON arrays (think JSONL) with many elements while using constant memory.
+This loads the entire array into memory first, then processes each element with a callback interface.
 
 ## Implementation
 
@@ -56,9 +56,9 @@ The parser is built using standard Haskell parser combinators. The core modules 
 - `Primitives.hs` - Basic parser building blocks  
 - `ParserTypes.hs` - Result types and error handling
 - `ArbitraryStreaming.hs` - Streaming parser for chunk boundaries
-- `StreamingArrayParser.hs` - Memory-efficient array processing
+- `StreamingArrayParser.hs` - Convenient array element processing
 
-The streaming parsers use continuation-passing style to maintain state between chunks. When a parse is incomplete, they return a continuation function that can resume parsing when more input arrives.
+The arbitrary streaming parser buffers input until complete JSON values can be parsed from the accumulated data.
 
 ## Test cases
 
