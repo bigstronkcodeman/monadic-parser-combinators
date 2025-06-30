@@ -8,7 +8,7 @@ This parser handles the full JSON specification, including proper Unicode suppor
 
 ## Building and running
 
-You'll need GHC 9.4.8 or later and Cabal 3.0+.
+GHC 9.4.8+ and Cabal 3.0+ required.
 
 ```bash
 git clone <this-repo>
