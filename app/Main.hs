@@ -3,12 +3,12 @@ module Main where
 
 import Paths_parsing (getDataDir)
 import System.Directory (listDirectory, doesFileExist, doesDirectoryExist)
-import System.FilePath ((</>), takeExtension)
+import System.FilePath ((</>), takeExtension, takeFileName)
 import Control.Exception (IOException, try)
 import Control.Monad (forM_, filterM)
 import Text.Printf (printf)
 import qualified Data.Text.Lazy.IO as T
-import Parsing.JSONParser
+import Parsing.JSONParser (jsonValue, prettyPrintJson)
 import Parsing.Primitives
 import Parsing.ParserTypes
 import Data.List (intercalate)
@@ -34,11 +34,11 @@ main = do
   let resourcesDir = dataDir </> "resources"
   jsonFiles <- walkDirectoryWith ((== ".json") . takeExtension) resourcesDir
   forM_ jsonFiles $ \filePath -> do
-    print filePath
+    printf "Parsing %s...\n" $ takeFileName filePath
     jsonText <- T.readFile filePath
     let parsedJson = parse jsonValue jsonText
     case parsedJson of
       Failure _ _ errCtx err -> printf "Failed to parse JSON!\nError context: %s\nError: %s\n" (intercalate ", " errCtx) err
       Partial _ -> printf "Partial ?\n"
-      Finished _ result -> printf "Parsed JSON:\n%s\n" (show result)
+      Finished _ result -> printf "Parsed JSON:\n%s\n" (prettyPrintJson result)
     putStr "\n"
