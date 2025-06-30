@@ -71,6 +71,10 @@ executable parsing
                  , Parsing.JSONParser
                  , Parsing.ParserTypes
                  , Parsing.Primitives
+                 , Parsing.SimpleStreaming
+                 , Parsing.StreamingJSONParser
+                 , Parsing.StreamingPrimitives
+                 , Parsing.TrueStreaming
                  , Parsing.UtilParsers
 
     -- LANGUAGE extensions used by modules in this package.
