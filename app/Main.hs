@@ -115,7 +115,7 @@ arbitraryStreamingTest = do
   hClose handle2
   printf "Total JSON objects parsed: %d\n\n" totalProcessed2
   
-  printf "✅ Successfully parsed files using real buffered streaming!\n\n"
+  printf "Successfully parsed files using real buffered streaming!\n\n"
   where 
     processor :: JsonValue -> IO Bool
     processor value = do

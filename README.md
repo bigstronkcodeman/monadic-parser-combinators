@@ -1,4 +1,4 @@
-# JSON Parser in Haskell
+# Haskell JSON Parser 
 
 A JSON parser built from scratch in Haskell using parser combinators. Includes support for streaming large files and processing data that arrives in arbitrary chunks.
 
