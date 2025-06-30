@@ -4,7 +4,7 @@ module Main where
 import Paths_parsing (getDataDir)
 import System.Directory (listDirectory, doesFileExist, doesDirectoryExist)
 import System.FilePath ((</>), takeExtension, takeFileName)
-import System.IO (Handle, IOMode(..), openFile, hClose, hSetBuffering, BufferMode(..), hIsEOF, hGetChar)
+import System.IO (IOMode(..), openFile, hClose)
 import qualified Data.Text.Lazy.IO as T
 import qualified Data.Text.Lazy as TL
 import Control.Exception (IOException, try)
@@ -12,11 +12,9 @@ import Control.Monad (forM_, filterM)
 import Text.Printf (printf)
 import qualified Data.HashMap.Lazy
 import Parsing.JSONParser (JsonValue(..), jsonValue, prettyPrintJson)
-import qualified Parsing.TrueStreaming as TS
-import Parsing.TrueStreaming (parseIncrementally, StreamResult(..))
-import Parsing.Primitives
-import Parsing.ParserTypes
-import Data.List (intercalate)
+import Parsing.StreamingArrayParser (processJsonArrayFile)
+import Parsing.Primitives (parse)
+import Parsing.ParserTypes (Result(..))
 
 walkDirectory :: FilePath -> IO [FilePath]
 walkDirectory dir = do
@@ -33,80 +31,63 @@ walkDirectory dir = do
 walkDirectoryWith :: (FilePath -> Bool) -> FilePath -> IO [FilePath]
 walkDirectoryWith p filePath = filter p <$> walkDirectory filePath
 
-bufferedParseTest :: IO ()
-bufferedParseTest = do
-  printf "=== Buffered File Parsing Test ===\n"
+streamingArrayTest :: IO ()
+streamingArrayTest = do
+  printf "=== True Streaming JSON Array Parser ===\n"
   dataDir <- getDataDir
-  let largeFile = dataDir </> "resources" </> "large_data.json"
-  printf "Reading file in chunks: %s...\n" $ takeFileName largeFile
-  handle <- openFile largeFile ReadMode
-  hSetBuffering handle $ BlockBuffering $ Just 1024
-  parseResult <- parseFileBuffered handle TS.streamingJsonValue
-  case parseResult of
-    StreamDone _ result -> do
-      printf "Successfully parsed large JSON file!\n"
-      printf "Parsed JSON:\n%s" $ prettyPrintJson result
-    StreamFailed err -> printf "Failed to parse: %s\n" err
-    StreamPartial _ -> printf "Unexpected partial result at end\n"
+  let arrayFile = dataDir </> "resources" </> "large_array.json"
+  printf "Processing JSON array file: %s\n" $ takeFileName arrayFile
+  
+  handle <- openFile arrayFile ReadMode
+  
+  -- Process array elements one at a time with constant memory usage
+  totalProcessed <- processJsonArrayFile handle $ \element -> do
+    case element of
+      JsonObject obj -> do
+        let name = case Data.HashMap.Lazy.lookup (TL.pack "name") obj of
+              Just (JsonString n) -> TL.unpack n
+              _ -> "Unknown"
+        let dept = case Data.HashMap.Lazy.lookup (TL.pack "department") obj of
+              Just (JsonString d) -> TL.unpack d
+              _ -> "Unknown"
+        printf "  Employee: %s (Department: %s)\n" name dept
+        printf "  Full JSON: %s\n" (prettyPrintJson element)
+        
+        -- Demonstrate early termination: stop after Engineering employees
+        if dept == "Engineering"
+          then do
+            printf "  Found Engineering employee - continuing...\n"
+            return True  -- Continue processing
+          else return True  -- Continue processing
+      _ -> do
+        printf "  Non-object element: %s\n" (prettyPrintJson element)
+        return True  -- Continue processing
+  
+  printf "Total elements processed: %d\n" totalProcessed
   hClose handle
   printf "\n"
-
-parseFileBuffered :: Handle -> TS.StreamingParser a -> IO (TS.StreamResult a)
-parseFileBuffered handle parser = do
-  firstChunk <- readChunk handle 1024
-  if TL.null firstChunk
-    then return $ StreamFailed "Empty file"
-    else parseLoop $ parseIncrementally parser firstChunk
-  where
-    parseLoop :: TS.StreamResult a -> IO (TS.StreamResult a)
-    parseLoop currentResult = do
-      case currentResult of
-        StreamDone remaining result -> return $ StreamDone remaining result
-        StreamFailed err -> return $ StreamFailed err
-        StreamPartial cont -> do
-          chunk <- readChunk handle 1024
-          if TL.null chunk
-            then return $ StreamFailed "Unexpected end of file"
-            else do
-              printf "Read chunk (%d chars): %s...\n" 
-                (fromIntegral $ TL.length chunk :: Int) 
-                (TL.unpack $ TL.take 50 chunk)
-              parseLoop $ cont chunk
-
-readChunk :: Handle -> Int -> IO TL.Text
-readChunk handle maxSize = do
-  eof <- hIsEOF handle
-  if eof
-    then return TL.empty
-    else readChars handle maxSize ""
-  where
-    readChars :: Handle -> Int -> String -> IO TL.Text
-    readChars _ 0 acc = return $ TL.pack $ reverse acc
-    readChars h n acc = do
-      eof <- hIsEOF h
-      if eof
-        then return $ TL.pack $ reverse acc
-        else do
-          c <- hGetChar h
-          readChars h (n-1) (c:acc)
 
 
 regularParseTest :: IO ()
 regularParseTest = do
-  printf "=== Non-Buffered File Parsing Test ===\n"
+  printf "=== Regular JSON File Parsing ===\n"
   dataDir <- getDataDir
   let resourcesDir = dataDir </> "resources"
   jsonFiles <- walkDirectoryWith ((== ".json") . takeExtension) resourcesDir
+  
+  printf "Found %d JSON files:\n" (length jsonFiles)
   forM_ jsonFiles $ \filePath -> do
-    printf "Parsing %s...\n" $ takeFileName filePath
+    printf "\n--- Parsing %s ---\n" $ takeFileName filePath
     jsonText <- T.readFile filePath
     let parsedJson = parse jsonValue jsonText
     case parsedJson of
-      Failure _ _ errCtx err -> printf "Failed to parse JSON!\nError context: %s\nError: %s\n" (intercalate ", " errCtx) err
-      Partial _ -> printf "Partial ?\n"
-      Finished _ result -> printf "Parsed JSON:\n%s\n" (prettyPrintJson result)
-    putStr "\n"
-
+      Failure _ _ _ err -> printf "✗ Failed to parse JSON! Error: %s\n" err
+      Partial _ -> printf "⚠ Partial result\n"
+      Finished _ result -> do
+        printf "✓ Successfully parsed:\n%s\n" (prettyPrintJson result)
+  printf "\n"
 
 main :: IO ()
-main = regularParseTest >> bufferedParseTest
+main = do
+  streamingArrayTest
+  regularParseTest

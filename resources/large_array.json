@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "name": "Alice Johnson",
+    "email": "alice@example.com",
+    "age": 28,
+    "department": "Engineering",
+    "salary": 75000
+  },
+  {
+    "id": 2,
+    "name": "Bob Smith",
+    "email": "bob@example.com",
+    "age": 35,
+    "department": "Marketing",
+    "salary": 65000
+  },
+  {
+    "id": 3,
+    "name": "Carol Davis",
+    "email": "carol@example.com",
+    "age": 42,
+    "department": "Engineering",
+    "salary": 85000
+  },
+  {
+    "id": 4,
+    "name": "David Wilson",
+    "email": "david@example.com",
+    "age": 29,
+    "department": "Sales",
+    "salary": 55000
+  },
+  {
+    "id": 5,
+    "name": "Eva Brown",
+    "email": "eva@example.com",
+    "age": 31,
+    "department": "HR",
+    "salary": 60000
+  },
+  {
+    "id": 6,
+    "name": "Frank Miller",
+    "email": "frank@example.com",
+    "age": 38,
+    "department": "Engineering",
+    "salary": 90000
+  },
+  {
+    "id": 7,
+    "name": "Grace Taylor",
+    "email": "grace@example.com",
+    "age": 26,
+    "department": "Design",
+    "salary": 70000
+  },
+  {
+    "id": 8,
+    "name": "Henry Anderson",
+    "email": "henry@example.com",
+    "age": 44,
+    "department": "Engineering",
+    "salary": 95000
+  },
+  {
+    "id": 9,
+    "name": "Iris Thompson",
+    "email": "iris@example.com",
+    "age": 33,
+    "department": "Marketing",
+    "salary": 68000
+  },
+  {
+    "id": 10,
+    "name": "Jack Martinez",
+    "email": "jack@example.com",
+    "age": 37,
+    "department": "Sales",
+    "salary": 58000
+  }
+]

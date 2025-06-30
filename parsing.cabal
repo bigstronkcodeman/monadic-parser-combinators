@@ -71,9 +71,7 @@ executable parsing
                  , Parsing.JSONParser
                  , Parsing.ParserTypes
                  , Parsing.Primitives
-                 , Parsing.SimpleStreaming
-                 , Parsing.StreamingJSONParser
-                 , Parsing.StreamingPrimitives
+                 , Parsing.StreamingArrayParser
                  , Parsing.TrueStreaming
                  , Parsing.UtilParsers
 
