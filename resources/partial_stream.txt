@@ -1,0 +1,6 @@
+{"name": "Alice", "a
+ge": 28, "skills": ["Has
+kell", "Python"]} {"name": 
+"Bob", "age": 35, "skills": 
+["JavaScript", "Go"]} {"na
+me": "Carol", "age": 42}

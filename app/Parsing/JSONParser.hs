@@ -196,7 +196,7 @@ escapeForDisplay = concatMap escapeChar
     escapeChar '\t' = "\\t"
     escapeChar c 
       | c < ' ' = "\\u" ++ pad4 (showHex (fromEnum c) "")
-      | otherwise = [c]  -- This preserves Unicode characters!
+      | otherwise = [c]  
     
     pad4 s = replicate (4 - length s) '0' ++ s
     showHex n s = case n of

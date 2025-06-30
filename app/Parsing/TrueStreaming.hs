@@ -1,4 +1,3 @@
-{-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module Parsing.TrueStreaming (
@@ -22,18 +21,16 @@ import Numeric (readHex)
 import Parsing.JSONParser (JsonValue(..))
 import Prelude hiding (fail, null)
 
--- | Result of incremental parsing
 data StreamResult a 
-  = StreamDone Text a           -- ^ Parsing complete with remaining input
-  | StreamPartial (Text -> StreamResult a)  -- ^ Needs more input
-  | StreamFailed String         -- ^ Parsing failed
+  = StreamDone Text a           
+  | StreamPartial (Text -> StreamResult a)  
+  | StreamFailed String         
 
 instance (Show a) => Show (StreamResult a) where
   show (StreamDone remaining result) = "StreamDone " ++ show (unpack remaining) ++ " " ++ show result
   show (StreamPartial _) = "StreamPartial <continuation>"
   show (StreamFailed err) = "StreamFailed " ++ show err
 
--- | A streaming parser that can suspend and resume
 newtype StreamingParser a = StreamingParser {
   runStreamingParser :: Text -> StreamResult a
 }
@@ -76,11 +73,9 @@ instance Monad StreamingParser where
 instance MonadFail StreamingParser where
   fail err = StreamingParser $ \_ -> StreamFailed err
 
--- | Parse incrementally - the main entry point
 parseIncrementally :: StreamingParser a -> Text -> StreamResult a
 parseIncrementally = runStreamingParser
 
--- | Parse a single character with proper streaming support
 streamingChar :: Char -> StreamingParser Char
 streamingChar expected = StreamingParser $ \input ->
   case uncons input of
@@ -93,7 +88,6 @@ streamingChar expected = StreamingParser $ \input ->
         then StreamDone rest c
         else StreamFailed $ "Expected " ++ show expected ++ " but got " ++ show c
 
--- | Parse any character
 streamingAnyChar :: StreamingParser Char
 streamingAnyChar = StreamingParser $ \input ->
   case uncons input of
@@ -103,7 +97,6 @@ streamingAnyChar = StreamingParser $ \input ->
         else runStreamingParser streamingAnyChar more
     Just (c, rest) -> StreamDone rest c
 
--- | Parse many occurrences of a parser
 streamingMany :: StreamingParser a -> StreamingParser [a]
 streamingMany p = StreamingParser $ \input ->
   let go acc inp = case runStreamingParser p inp of
@@ -118,7 +111,6 @@ streamingMany1 p = do
   rest <- streamingMany p
   return (first : rest)
 
--- | Parse a specific string
 streamingString :: String -> StreamingParser String
 streamingString [] = pure []
 streamingString (c:cs) = do
@@ -126,11 +118,9 @@ streamingString (c:cs) = do
   _ <- streamingString cs
   return (c:cs)
 
--- | Skip whitespace
 streamingWhitespace :: StreamingParser ()
 streamingWhitespace = StreamingParser $ \input -> StreamDone (TL.dropWhile (`elem` (" \t\n\r" :: String)) input) ()
 
--- | Streaming JSON parser
 streamingJsonValue :: StreamingParser JsonValue
 streamingJsonValue = streamingWhitespace *> (
   streamingJsonNull <|>
@@ -153,7 +143,6 @@ streamingJsonBool =
 
 streamingJsonNumber :: StreamingParser JsonValue
 streamingJsonNumber = do
-  -- Simple number parsing - just digits and optional decimal point
   digits <- streamingMany1 digitOrDot
   case reads digits of
     [(n, "")] -> return (JsonNumber n)
@@ -260,7 +249,6 @@ streamingKeyValuePair = do
   value <- streamingJsonValue
   return (key, value)
 
--- | Parse elements separated by a delimiter
 streamingSepBy :: StreamingParser a -> StreamingParser sep -> StreamingParser [a]
 streamingSepBy p sep = streamingSepBy1 p sep <|> pure []
 

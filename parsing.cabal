@@ -71,7 +71,10 @@ executable parsing
                  , Parsing.JSONParser
                  , Parsing.ParserTypes
                  , Parsing.Primitives
+                 , Parsing.ArbitraryStreaming
                  , Parsing.StreamingArrayParser
+                 , Parsing.StreamingJSONParser
+                 , Parsing.StreamingPrimitives
                  , Parsing.TrueStreaming
                  , Parsing.UtilParsers
 
@@ -85,6 +88,7 @@ executable parsing
                  , directory ^>=1.3.9.0
                  , filepath ^>=1.5.4.0
                  , bytestring ^>=0.11.5.3
+                 , mtl ^>=2.3.1
 
     -- Directories containing source files.
     hs-source-dirs: app

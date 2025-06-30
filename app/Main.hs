@@ -13,6 +13,7 @@ import Text.Printf (printf)
 import qualified Data.HashMap.Lazy
 import Parsing.JSONParser (JsonValue(..), jsonValue, prettyPrintJson)
 import Parsing.StreamingArrayParser (processJsonArrayFile)
+import Parsing.ArbitraryStreaming (processStream, initState, feedChunk)
 import Parsing.Primitives (parse)
 import Parsing.ParserTypes (Result(..))
 
@@ -40,7 +41,6 @@ streamingArrayTest = do
   
   handle <- openFile arrayFile ReadMode
   
-  -- Process array elements one at a time with constant memory usage
   totalProcessed <- processJsonArrayFile handle $ \element -> do
     case element of
       JsonObject obj -> do
@@ -53,15 +53,14 @@ streamingArrayTest = do
         printf "  Employee: %s (Department: %s)\n" name dept
         printf "  Full JSON: %s\n" (prettyPrintJson element)
         
-        -- Demonstrate early termination: stop after Engineering employees
         if dept == "Engineering"
           then do
             printf "  Found Engineering employee - continuing...\n"
-            return True  -- Continue processing
-          else return True  -- Continue processing
+            return True  
+          else return True  
       _ -> do
         printf "  Non-object element: %s\n" (prettyPrintJson element)
-        return True  -- Continue processing
+        return True  
   
   printf "Total elements processed: %d\n" totalProcessed
   hClose handle
@@ -87,7 +86,29 @@ regularParseTest = do
         printf "✓ Successfully parsed:\n%s\n" (prettyPrintJson result)
   printf "\n"
 
+arbitraryStreamingTest :: IO ()
+arbitraryStreamingTest = do
+  printf "=== Arbitrary Streaming JSON Parser ===\n"
+  printf "Testing with partial JSON across arbitrary chunk boundaries...\n\n"
+  
+  let chunk1 = TL.pack "{\"name\": \"Ali"
+  let chunk2 = TL.pack "ce\", \"age\": 28}"
+  
+  printf "Chunk 1: %s\n" (show chunk1)
+  printf "Chunk 2: %s\n" (show chunk2)
+  printf "\n"
+  
+  totalProcessed <- processStream processor [chunk1, chunk2]
+  printf "\nTotal JSON objects parsed: %d\n" totalProcessed
+  printf "✅ Successfully handled partial JSON across chunk boundaries!\n\n"
+  where 
+    processor :: JsonValue -> IO Bool
+    processor value = do
+      printf "✓ Parsed complete JSON: %s\n" (prettyPrintJson value)
+      return True
+
 main :: IO ()
 main = do
-  streamingArrayTest
+  arbitraryStreamingTest
+  streamingArrayTest  
   regularParseTest

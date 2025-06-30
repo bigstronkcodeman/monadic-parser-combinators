@@ -20,7 +20,6 @@ import Parsing.StreamingPrimitives (streamingItem, streamingTakeWhile)
 import Parsing.UtilParsers (satisfy)
 import Prelude hiding (takeWhile, fail, mapM_)
 
--- Streaming-aware JSON parser
 streamingJsonValue :: Parser JsonValue
 streamingJsonValue = 
   streamingJsonNull <|> 
@@ -45,7 +44,6 @@ streamingJsonBool =
 
 streamingJsonNumber :: Parser JsonValue
 streamingJsonNumber = do
-  -- Simplified number parsing for demo
   digits <- streamingTakeWhile1 (\c -> c >= '0' && c <= '9' || c == '.' || c == '-')
   case reads (Data.Text.Lazy.unpack digits) of
     [(n, "")] -> return (JsonNumber n)
@@ -125,7 +123,6 @@ streamingKeyValuePair = do
   value <- streamingJsonValue
   return (key, value)
 
--- Helper parsers using streaming primitives
 streamingChar :: Char -> Parser Char
 streamingChar expected = do
   c <- streamingItem

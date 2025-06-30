@@ -12,8 +12,6 @@ import Parsing.Primitives (parse)
 import Parsing.ParserTypes (Result(..))
 import qualified Parsing.JSONParser as JP
 
--- | Process a JSON array file one element at a time with constant memory usage
--- This is a simplified demonstration - reads entire file but processes elements individually
 processJsonArrayFile :: Handle -> (JsonValue -> IO Bool) -> IO Int
 processJsonArrayFile handle processor = do
   content <- T.hGetContents handle
