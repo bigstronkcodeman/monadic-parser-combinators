@@ -4,7 +4,7 @@ A JSON parser built from scratch in Haskell using parser combinators. Includes s
 
 ## What it does
 
-This parser handles the full JSON specification, including proper Unicode support and all the standard escape sequences. The interesting part is the streaming implementation - it can parse JSON that comes in arbitrary chunks, like you'd get from a network connection or when reading a large file in pieces.
+This parser handles the full JSON specification, including proper Unicode support and all the standard escape sequences. There is also a streaming implementation - it can parse JSON that comes in arbitrary chunks, like you'd get from a network connection or when reading a large file in pieces.
 
 ## Building and running
 
@@ -62,13 +62,13 @@ The streaming parsers use continuation-passing style to maintain state between c
 
 ## Test cases
 
-The parser is tested against various JSON files in the `resources/` directory:
+The parser is tested against various JSON files in the `resources/` directory (this project was just for fun, testing may be lacking rigour):
 
 - Unicode text in multiple languages (Japanese, Arabic, Russian, etc.)
 - Mathematical symbols and emojis
 - All JSON escape sequences including Unicode escapes
 - Edge cases like empty objects, scientific notation, and deep nesting
-- Large datasets for streaming tests
+- Larger datasets for streaming tests
 
 ## Usage examples
 
@@ -111,7 +111,3 @@ processJsonArrayFile handle $ \record -> do
 - `text` - Efficient text processing
 - `unordered-containers` - HashMap for JSON objects  
 - `mtl` - State monad for streaming parser
-
-## License
-
-BSD-3-Clause
