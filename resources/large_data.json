@@ -1,0 +1,193 @@
+{
+  "dataset": "Large JSON Test Data",
+  "version": "1.0",
+  "generated_at": "2024-06-30T00:00:00Z",
+  "total_records": 1000,
+  "records": [
+    {
+      "id": 1,
+      "user": {
+        "name": "Alice Johnson",
+        "email": "alice.johnson@example.com",
+        "age": 28,
+        "location": {
+          "city": "New York",
+          "state": "NY",
+          "coordinates": {
+            "lat": 40.7128,
+            "lng": -74.0060
+          }
+        },
+        "preferences": {
+          "theme": "dark",
+          "notifications": {
+            "email": true,
+            "sms": false,
+            "push": true
+          }
+        }
+      },
+      "transactions": [
+        {
+          "id": "txn_001",
+          "amount": 125.50,
+          "currency": "USD",
+          "date": "2024-06-15T10:30:00Z",
+          "description": "Coffee shop purchase",
+          "category": "food"
+        },
+        {
+          "id": "txn_002",
+          "amount": 89.99,
+          "currency": "USD",
+          "date": "2024-06-16T14:22:00Z",
+          "description": "Book store",
+          "category": "education"
+        },
+        {
+          "id": "txn_003",
+          "amount": 250.00,
+          "currency": "USD",
+          "date": "2024-06-17T09:15:00Z",
+          "description": "Grocery shopping",
+          "category": "food"
+        }
+      ],
+      "metadata": {
+        "created": "2024-01-15T08:00:00Z",
+        "last_updated": "2024-06-29T16:45:00Z",
+        "tags": ["premium", "verified", "active"],
+        "score": 8.7
+      }
+    },
+    {
+      "id": 2,
+      "user": {
+        "name": "Bob Smith",
+        "email": "bob.smith@example.com",
+        "age": 35,
+        "location": {
+          "city": "Los Angeles",
+          "state": "CA",
+          "coordinates": {
+            "lat": 34.0522,
+            "lng": -118.2437
+          }
+        },
+        "preferences": {
+          "theme": "light",
+          "notifications": {
+            "email": false,
+            "sms": true,
+            "push": false
+          }
+        }
+      },
+      "transactions": [
+        {
+          "id": "txn_004",
+          "amount": 45.75,
+          "currency": "USD",
+          "date": "2024-06-18T12:00:00Z",
+          "description": "Gas station",
+          "category": "transport"
+        },
+        {
+          "id": "txn_005",
+          "amount": 199.99,
+          "currency": "USD",
+          "date": "2024-06-19T15:30:00Z",
+          "description": "Electronics store",
+          "category": "technology"
+        }
+      ],
+      "metadata": {
+        "created": "2024-02-20T10:30:00Z",
+        "last_updated": "2024-06-28T11:20:00Z",
+        "tags": ["standard", "active"],
+        "score": 7.2
+      }
+    },
+    {
+      "id": 3,
+      "user": {
+        "name": "Carol Davis",
+        "email": "carol.davis@example.com",
+        "age": 42,
+        "location": {
+          "city": "Chicago",
+          "state": "IL",
+          "coordinates": {
+            "lat": 41.8781,
+            "lng": -87.6298
+          }
+        },
+        "preferences": {
+          "theme": "auto",
+          "notifications": {
+            "email": true,
+            "sms": true,
+            "push": true
+          }
+        }
+      },
+      "transactions": [
+        {
+          "id": "txn_006",
+          "amount": 75.25,
+          "currency": "USD",
+          "date": "2024-06-20T09:45:00Z",
+          "description": "Restaurant dinner",
+          "category": "food"
+        },
+        {
+          "id": "txn_007",
+          "amount": 120.00,
+          "currency": "USD",
+          "date": "2024-06-21T16:00:00Z",
+          "description": "Clothing store",
+          "category": "shopping"
+        },
+        {
+          "id": "txn_008",
+          "amount": 35.50,
+          "currency": "USD",
+          "date": "2024-06-22T08:30:00Z",
+          "description": "Pharmacy",
+          "category": "health"
+        }
+      ],
+      "metadata": {
+        "created": "2024-03-10T14:15:00Z",
+        "last_updated": "2024-06-29T20:10:00Z",
+        "tags": ["premium", "verified", "power_user"],
+        "score": 9.1
+      }
+    }
+  ],
+  "summary": {
+    "total_users": 3,
+    "total_transactions": 8,
+    "total_amount": 1341.48,
+    "categories": {
+      "food": 3,
+      "education": 1,
+      "transport": 1,
+      "technology": 1,
+      "shopping": 1,
+      "health": 1
+    },
+    "average_transaction": 167.69,
+    "date_range": {
+      "start": "2024-06-15T10:30:00Z",
+      "end": "2024-06-22T08:30:00Z"
+    }
+  },
+  "configuration": {
+    "api_version": "v2.1",
+    "format": "json",
+    "compression": false,
+    "encryption": false,
+    "checksum": "sha256:a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456"
+  }
+}
